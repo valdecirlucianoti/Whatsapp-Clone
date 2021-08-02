@@ -66,6 +66,21 @@ class WhatsAppConreoller {
         Element.prototype.hasClass = function (name) {
             return this.classList.contains(name);
         }
+
+        HTMLFontElement.prototype.getForm = function () {
+            return new FormData(this);
+        }
+
+        HTMLFontElement.prototype.toJSON = function () {
+            let json = {};
+
+            this.getForm().forEach((value, key) => {
+                json[key] = value;
+            });
+
+            return json;
+        }
+
     }
 
     iniEvents() {
@@ -102,7 +117,7 @@ class WhatsAppConreoller {
         });
 
         this.el.inputNamePanelEditProfile.on('keypress', e => {
-            if(e.key === 'Enter'){
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 this.el.btnSavePanelEditProfile.click();
             }
@@ -115,6 +130,15 @@ class WhatsAppConreoller {
         this.formPanelAddContact.on('submit', e => {
             e.preventDefault();
             let formData = new FormData(this.formPanelAddContact);
+        });
+
+        this.el.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {
+            item.on('click', e=>{
+                this.el.home.hide();
+                this.el.main.css({
+                    display: 'flex'
+                });
+            });
         });
 
     }
