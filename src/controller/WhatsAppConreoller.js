@@ -141,7 +141,7 @@ class WhatsAppConreoller {
             });
         });
 
-        
+
         this.el.btnAttach.on('click', e => {
             e.stopPropagation();
             this.el.menuAttach.addClass('open');
@@ -152,7 +152,7 @@ class WhatsAppConreoller {
             this.el.inputPhoto.click();
         });
 
-        this.el.inputPhoto.on('change', e =>{
+        this.el.inputPhoto.on('change', e => {
             console.log(this.el.inputPhoto.files);
             [...this.el.inputPhoto.files].forEach(file => {
                 console.log(file);
@@ -189,7 +189,7 @@ class WhatsAppConreoller {
             this.el.panelMessagesContainer.show();
         });
 
-        this.el.btnSendDocument.on('click', e=>{
+        this.el.btnSendDocument.on('click', e => {
             console.log('documento enviado');
         });
 
@@ -201,17 +201,46 @@ class WhatsAppConreoller {
             this.el.modalContacts.hide();
         });
 
+        this.el.btnSendMicrophone.on('click', e => {
+            this.el.recordMicrophone.show();
+            this.el.btnSendMicrophone.hide();
+            this.startRecordMicrophoneTime();
+        });
+
+        this.el.btnCancelMicrophone.on('click', e => {
+            this.closeRecordMicrophone();
+        });
+
+        this.el.btnFinishMicrophone.on('click', e => {
+            this.closeRecordMicrophone();
+        });
+
+
 
     }
 
-    closeAllMainPanel(){
+    startRecordMicrophoneTime(){
+        let start = Date.now();
+
+        this._recordMicrophoneInterval = setInterval(() => {
+            this.el.recordMicrophoneTimer.innerHTML = (Format.toTime(Date.now() - start));
+        }, 100);
+    }
+
+    closeRecordMicrophone() {
+        this.el.recordMicrophone.hide();
+        this.el.btnSendMicrophone.show();
+        clearInterval(this._recordMicrophoneInterval);
+    }
+
+    closeAllMainPanel() {
         this.el.panelMessagesContainer.hide();
         this.el.panelDocumentPreview.removeClass('open');
         this.el.panelCamera.removeClass('open');
     }
 
     //erro de propagação
-    closeMenuAttach(e){
+    closeMenuAttach(e) {
         document.removeEventListener('click', this.closeMenuAttach);
         this.el.menuAttach.removeClass('open');
         console.log('remove menu');
