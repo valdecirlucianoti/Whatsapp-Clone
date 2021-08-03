@@ -1,4 +1,7 @@
-class WhatsAppConreoller {
+import {Format} from './../util/Format';
+import {CameraController} from './CameraController';
+
+export class WhatsAppConreoller {
 
     constructor() {
 
@@ -163,7 +166,7 @@ class WhatsAppConreoller {
             this.closeAllMainPanel();
             this.el.panelCamera.addClass('open');
             this.el.panelCamera.css({
-                'height': 'calc(100% - 120px)'
+                'height': '100%'
             });
             
             this._camera = new CameraController(this.el.videoCamera);
@@ -172,10 +175,12 @@ class WhatsAppConreoller {
         this.el.btnClosePanelCamera.on('click', e => {
             this.closeAllMainPanel();
             this.el.panelMessagesContainer.show();
+            this._camera.stop();
         });
 
         this.el.btnTakePicture.on('click', e => {
             console.log('Tirei uma foto');
+            this._camera.stop();
         });
 
         this.el.btnAttachDocument.on('click', e => {
