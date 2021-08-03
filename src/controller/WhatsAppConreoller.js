@@ -242,7 +242,7 @@ class WhatsAppConreoller {
             this.el.panelEmojis.toggleClass('open');
         });
 
-        this.el.panelEmojis.querySelectorAll('.emojik').array.forEach(emoji => {
+        this.el.panelEmojis.querySelectorAll('.emojik').forEach(emoji => {
             emoji.on('click', e => {
                 let img = this.el.imgEmojiDefault.cloneNode();
 
@@ -272,7 +272,7 @@ class WhatsAppConreoller {
                 range.insertNode(frag);
                 range.setStartAfter(img)
 
-                this.el.inputText.dispatchevent(new Event('keyup'));
+                this.el.inputText.dispatchEvent(new Event('keyup'));
             });
         });
 
