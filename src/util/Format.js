@@ -9,6 +9,7 @@ export class Format {
     }
 
     static toTime(duration){
+
         let seconds = parseInt((duration / 100) % 60);
         let minutes = parseInt((duration / (100 * 60)) % 60);
         let hours = parseInt((duration / (100 * 60 * 60)) % 24);
@@ -18,6 +19,7 @@ export class Format {
         }else{
             return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
+        
     }
     
 }

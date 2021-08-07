@@ -30,6 +30,7 @@ export class CameraController {
         let context = canvas.getContext('2d');
         context.drawImage(this._videoEl, 0, 0, canvas.width, canvas.height);
 
+        //retorna uma imagem base 64
         return canvas.toDataURL(mineType);
 
     }

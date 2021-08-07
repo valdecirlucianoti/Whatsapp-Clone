@@ -1,3 +1,3 @@
-import {WhatsAppConreoller} from './controller/WhatsAppConreoller';
+import { WhatsAppConreoller } from './controller/WhatsAppConreoller';
 
 window.app = new WhatsAppConreoller();

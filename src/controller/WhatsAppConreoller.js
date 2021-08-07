@@ -1,9 +1,10 @@
-import {Format} from './../util/Format';
-import {CameraController} from './CameraController';
+import { Format } from './../util/Format';
+import { CameraController } from './CameraController';
 
 export class WhatsAppConreoller {
 
     constructor() {
+        console.log('WhatsappController OK');
 
         this.elementsPrototype();
         this.loadElements();
@@ -15,7 +16,7 @@ export class WhatsAppConreoller {
 
         this.el = {};
         document.querySelectorAll('[id]').forEach(element => {
-            this.el[Format.getCamelCase(element.id)] = element;
+            this.el[Format.getCamelCase(element.id)] = element; 
         });
 
     }
@@ -168,7 +169,7 @@ export class WhatsAppConreoller {
             this.el.panelCamera.css({
                 'height': '100%'
             });
-            
+
             this._camera = new CameraController(this.el.videoCamera);
         });
 
@@ -207,6 +208,16 @@ export class WhatsAppConreoller {
             this.el.panelDocumentPreview.css({
                 'height': '100%'
             });
+            this.el.inputDocument.click();
+        });
+
+        this.el.inputDocument.on('change', e => {
+
+            if(this.el.inputDocument){
+                let file = this.el.inputDocument.files[0];
+
+                console.log('file',file);
+            }
         });
 
         this.el.btnClosePanelDocumentPreview.on('click', e => {
