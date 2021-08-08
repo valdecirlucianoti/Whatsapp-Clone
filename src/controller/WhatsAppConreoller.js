@@ -1,5 +1,7 @@
 import { Format } from './../util/Format';
 import { CameraController } from './CameraController';
+import { MicrophoneController } from './MicrophoneController';
+import { DocumentPreviewController } from './DocumentPreviewController';
 
 export class WhatsAppConreoller {
 
@@ -206,7 +208,7 @@ export class WhatsAppConreoller {
             this.closeAllMainPanel();
             this.el.panelDocumentPreview.addClass('open');
             this.el.panelDocumentPreview.css({
-                'height': '100%'
+                'height': 'calc(100%)'
             });
             this.el.inputDocument.click();
         });
@@ -214,9 +216,47 @@ export class WhatsAppConreoller {
         this.el.inputDocument.on('change', e => {
 
             if(this.el.inputDocument){
+                
                 let file = this.el.inputDocument.files[0];
 
-                console.log('file',file);
+                this._documentPreviewController = new DocumentPreviewController(file);
+
+                this._documentPreviewController.getPreviewData().then(result => {
+                    //erro no layou da camera
+                    this.el.imgPanelDocumentPreview.css({
+                        'height': 'calc(100% - 50px)'
+                    });
+
+                    this.el.imgPanelDocumentPreview.src = result.src;
+                    this.el.infoPanelDocumentPreview.innerHTML = result.info;
+                    this.el.imagePanelDocumentPreview.show();
+                    this.el.filePanelDocumentPreview.hide();
+
+                }).catch(err => {
+
+                    switch (file.type) {
+                        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                        case 'application/msword':
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-doc';
+                            break;
+
+                        case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                        case 'application/vnd.ms-excel':
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-xls';
+                            break;
+
+                        case 'application/vnd.ms-powerpoint':
+                        case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-ppt';
+                            break;
+
+                        default:
+                            this.el.iconPanelDocumentPreview.classList.value = 'jcxhw icon-doc-generic';
+                    }
+                    this.el.filenamePanelDocumentPreview.innerHTML = file.name;
+                    this.el.imagePanelDocumentPreview.hide();
+                    this.el.filePanelDocumentPreview.show();
+                });
             }
         });
 
@@ -241,10 +281,13 @@ export class WhatsAppConreoller {
             this.el.recordMicrophone.show();
             this.el.btnSendMicrophone.hide();
             this.startRecordMicrophoneTime();
+
+            this._microphoneController = new MicrophoneController();
         });
 
         this.el.btnCancelMicrophone.on('click', e => {
             this.closeRecordMicrophone();
+            this._microphoneController.stop();
         });
 
         this.el.btnFinishMicrophone.on('click', e => {
