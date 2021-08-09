@@ -2,16 +2,33 @@ import { Format } from './../util/Format';
 import { CameraController } from './CameraController';
 import { MicrophoneController } from './MicrophoneController';
 import { DocumentPreviewController } from './DocumentPreviewController';
+import { Firebase } from '../util/Firebase'; // './../util/Firebase' se der erro usar esse
 
 export class WhatsAppConreoller {
 
     constructor() {
         console.log('WhatsappController OK');
 
+        this._firebase = new Firebase();
+        this.initAuth();
+
         this.elementsPrototype();
         this.loadElements();
         this.iniEvents();
 
+
+    }
+
+    initAuth(){
+
+        this._firebase.initAuth().then((response) => {
+            this._user = response;
+            this.el.appContent.css({
+                display: 'flex'
+            });
+        }).catch(err => {
+            console.error(err);
+        });
     }
 
     loadElements() {
