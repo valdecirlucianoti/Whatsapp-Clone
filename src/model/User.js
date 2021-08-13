@@ -69,9 +69,9 @@ export class User extends Model {
         //set retorna uma promise mas como o metodo chamador ja recebe e trata uma, deixarei para que o metodo que se intereçar trate esse retorno
     }
 
-    getContacts(){
+    getContacts(filter = ''){
         return new Promise((s, f) => {
-            User.getContactsRef(this.email).onSnapshot(docs => {
+            User.getContactsRef(this.email).where('name', '>=', filter).onSnapshot(docs => {
                 let contacts = [];
 
                 docs.forEach(doc => {
