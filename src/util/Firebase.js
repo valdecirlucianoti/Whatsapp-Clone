@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
-import "firebase/auth";
 import "firebase/firestore";
+import "firebase/auth";
 
 export class Firebase {
 
@@ -10,7 +10,7 @@ export class Firebase {
             apiKey: "AIzaSyCf87JdQliKHqSvXBrGIBy0cvRr3rUlQ-k",
             authDomain: "whatsapp-clone-e07f7.firebaseapp.com",
             projectId: "whatsapp-clone-e07f7",
-            storageBucket: "whatsapp-clone-e07f7.appspot.com",
+            storageBucket: "gs://whatsapp-clone-e07f7.appspot.com",
             messagingSenderId: "694769721712",
             appId: "1:694769721712:web:d2dbf608378d0c02446fb5"
         }
@@ -20,19 +20,22 @@ export class Firebase {
 
     initAuth() {
         return new Promise((s, f) => {
+
             let provider = new firebase.auth.GoogleAuthProvider();
+
             firebase.auth().signInWithPopup(provider).then(result => {
 
                 let token = result.credential.accessToken;
                 let user = result.user;
                 s({
-                    user, 
+                    user,
                     token
                 });
 
             }).catch(err => {
                 console.error(err);
             });
+
         });
     }
 
