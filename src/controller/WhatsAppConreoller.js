@@ -7,6 +7,7 @@ import { User } from '../model/User';
 import { Chat } from '../model/Chat';
 import { Message } from '../model/Message';
 import { Base64 } from '../util/Base64';
+import { ContactsController } from './ContactsController';
 
 export class WhatsAppConreoller {
 
@@ -195,7 +196,7 @@ export class WhatsAppConreoller {
                     this.el.panelMessagesContainer.querySelector(`#_` + data.id).innerHTML = view.innerHTML;
 
                 }
-                
+
                 if (this.el.panelMessagesContainer.querySelector(`#_` + data.id) && me) {
                     let msgEl = this.el.panelMessagesContainer.querySelector(`#_` + data.id);
                     msgEl.querySelector('.message-status').innerHTML = message.getStatusViewElement().outerHTML;
@@ -595,11 +596,26 @@ export class WhatsAppConreoller {
         });
 
         this.el.btnAttachContact.on('click', e => {
+
             this.el.modalContacts.show();
+
+            this._contactsController = new ContactsController(this.el.modalContacts, this._user);
+            this._contactsController.on('select', contact => {
+
+                Message.sendContact(
+                    this._contactActive.chatId,
+                    this._user.email,
+                    contact
+                );
+
+            });
+
+            this._contactsController.open();
+
         });
 
         this.el.btnCloseModalContacts.on('click', e => {
-            this.el.modalContacts.hide();
+            this._contactsController.close();
         });
 
         this.el.btnSendMicrophone.on('click', e => {
