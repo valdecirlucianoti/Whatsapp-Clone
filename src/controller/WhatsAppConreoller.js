@@ -13,16 +13,60 @@ import { Upload } from '../util/Upload';
 export class WhatsAppConreoller {
 
     constructor() {
-        console.log('WhatsappController OK');
 
         this._firebase = new Firebase();
+        this._active = true;
         this.initAuth();
-
         this.elementsPrototype();
         this.loadElements();
         this.iniEvents();
+        this.checkNotifications();
 
+    }
 
+    checkNotifications() {
+        if (typeof Notification === 'function') {
+            if (Notification.permission !== 'granted') {
+                this.el.alertNotificationPermission.show();
+            } else {
+                this.el.alertNotificationPermission.hide();
+            }
+
+            this.el.alertNotificationPermission.on('click', e => {
+
+                Notification.requestPermission(permission => {
+                    if (permission === 'granted') {
+                        this.el.alertNotificationPermission.hide();
+                        console.log('notificação permitidas');
+                    }
+                });
+
+            });
+        }
+    }
+
+    notification(data) {
+        if (Notification.permission === 'granted' && !this._active) {
+            console.log('data',data);
+            console.log('this._contactActive.email', this._contactActive.email);
+            if(data.from == this._contactActive.email){
+
+                let n = new Notification(this._contactActive.name, {
+                    icon: this._contactActive.photo,
+                    body: data.content
+                });
+    
+                let sound = new Audio('../audio/alert.mp3');
+                sound.currentTime = 0;
+                sound.play();
+    
+                setTimeout(() => {
+                    if (n) n.close();
+                }, 3000);
+
+            }
+            
+        }
     }
 
     initAuth() {
@@ -98,7 +142,7 @@ export class WhatsAppConreoller {
                                  <span dir="auto" title="${contact.name}" class="_1wjpf">${contact.name}</span>
                              </div>
                              <div class="_3Bxar">
-                                 <span class="_3T2VG">${contact.lastMessageTime}</span>
+                                 <span class="_3T2VG">${Format.timeStampToTime(contact.lastMessageTime)}</span>
                              </div>
                          </div>
                          <div class="_1AwDx">
@@ -151,6 +195,7 @@ export class WhatsAppConreoller {
         this._contactActive = contact;
         this.el.activeName.innerHTML = contact.name;
         this.el.activeStatus.innerHTML = contact.status;
+        
         if (contact.photo) {
             let img = this.el.activePhoto;
             img.src = contact.photo;
@@ -162,6 +207,8 @@ export class WhatsAppConreoller {
         });
 
         this.el.panelMessagesContainer.innerHTML = '';
+
+        this._messagesReceived = [];
 
         Message.getRef(this._contactActive.chatId).orderBy('timeStamp').onSnapshot(docs => {
 
@@ -176,6 +223,12 @@ export class WhatsAppConreoller {
                 let message = new Message();
                 message.fromJSON(data);
                 let me = (data.from === this._user.email);
+
+                if (!me && this._messagesReceived.filter(id => { return (id === data.id) }).length === 0) {
+                    this.notification(data);
+                    this._messagesReceived.push(data.id);
+                }
+
                 let view = message.getViewElement(me);
 
                 if (!this.el.panelMessagesContainer.querySelector('#_' + data.id)) {
@@ -222,15 +275,15 @@ export class WhatsAppConreoller {
                                 this._user.chatId = chat.id;
 
                                 contact.addContact(this._user); //adiciona a si mesmo como contato do seu contato
-        
+
                                 this.setActiveChat(contact);
 
-                            });  
+                            });
 
                         });
 
                     });
-                    
+
                 }
 
             });
@@ -322,6 +375,14 @@ export class WhatsAppConreoller {
 
     iniEvents() {
 
+        window.addEventListener('focus', e => {
+            this._active = true;
+        });
+
+        window.addEventListener('blur', e => {
+            this._active = false;
+        });
+
         //this.el.inputSearchContactsPlaceholder
         this.el.inputSearchContacts.on('keyup', e => {
 
@@ -367,11 +428,11 @@ export class WhatsAppConreoller {
 
         this.el.inputProfilePhoto.on('change', e => {
 
-            if(this.el.inputProfilePhoto.files.length > 0){
+            if (this.el.inputProfilePhoto.files.length > 0) {
                 let file = this.el.inputProfilePhoto.files[0];
                 Upload.send(file, this._user.email).then(snapshot => {
                     this._user.photo = snapshot.downloadURL;
-                    this._user.save().then(()=>{
+                    this._user.save().then(() => {
                         this.el.btnClosePanelEditProfile.click();
                     });
                 });

@@ -52,7 +52,6 @@ export class Message extends Model {
         let div = document.createElement('div');
 
         div.className = 'message';
-        console.log('antes', this.id);
         div.id = `_${this.id}`;
 
         switch (this.type) {
@@ -387,7 +386,6 @@ export class Message extends Model {
         }
 
         div.firstElementChild.classList.add(className);
-        console.log('antes', this.id);
         return div;
     }
 
