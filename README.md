@@ -29,16 +29,29 @@ http://localhost:8080/
 
 ### Configurando a Base de Dados
 
-Acesse o site do Firebase e cadastre seu aplicativo, após realizar esta ação copie o código gerado no site e substitua o código abaixo pelo seu:
+Esta aplicação utiliza o `Firebase` para alocar as referências aos arquivos no servidor.
+É necessário o cadastro no site:
 ```
-this._config = {
-            apiKey: "AIzaSyCf87JdQliKHqSvXBrGIBy0cvRr3rUlQ-k",
-            authDomain: "whatsapp-clone-e07f7.firebaseapp.com",
-            projectId: "whatsapp-clone-e07f7",
-            storageBucket: "gs://whatsapp-clone-e07f7.appspot.com",
-            messagingSenderId: "694769721712",
-            appId: "1:694769721712:web:d2dbf608378d0c02446fb5"
-        }
+www.firebase.google.com
+```
+
+Crie um projeto e obtenha o arquivo `firebaseConfig` e substitua as informações no método `connectFirebase` por seus dados de autenticação:
+```
+var firebaseConfig = {
+            apiKey: "*",
+            authDomain: "*",
+            databaseURL: "*",
+            projectId: "*",
+            storageBucket: "*",
+            messagingSenderId: "*",
+            appId: "*",
+            measurementId: "*"
+          };
+          // Initialize Firebase
+          firebase.initializeApp(firebaseConfig);
+          firebase.analytics();
+}
+
 ```
 
 As demais estruturas do banco são criadas conforme você interagir com o programa.
